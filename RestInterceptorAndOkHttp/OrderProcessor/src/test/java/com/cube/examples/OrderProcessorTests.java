@@ -1,4 +1,4 @@
-package com.howtodoinjava.demo;
+package com.cube.examples;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
