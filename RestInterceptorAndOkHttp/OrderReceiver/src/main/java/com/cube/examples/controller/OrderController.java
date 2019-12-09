@@ -55,7 +55,7 @@ public class OrderController
 
         // send it to order transformer
         //send for processing
-        Request.Builder requestBuilder = new Request.Builder().url("http://localhost:8081/enhanceAndSendForProcessing/");
+        Request.Builder requestBuilder = new Request.Builder().url("http://order-transformer:9080/enhanceAndSendForProcessing/");
 
         requestBuilder.post( okhttp3.RequestBody.create(MediaType.parse("application/json"), jacksonObjectMapper.writeValueAsString(order)));
         try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {

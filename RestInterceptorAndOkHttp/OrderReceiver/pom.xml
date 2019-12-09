@@ -52,7 +52,20 @@
 			<artifactId>okhttp-spring-boot-autoconfigure</artifactId>
 			<version>2.1.5</version>
 		</dependency>
-
+		<dependency>
+			<groupId>com.cube.interceptor</groupId>
+			<artifactId>spring-interceptor</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/lib/spring-interceptor-0.0.1-SNAPSHOT.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>io.cube</groupId>
+			<artifactId>agent</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/lib/agent-1.0.0-jar-with-dependencies.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -60,6 +73,16 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId> 
+			</plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<version>1.8.0</version>
+				<configuration>
+					<to>
+						<image>docker.io/cubeiocorp/sample-order-receiver</image>
+					</to>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

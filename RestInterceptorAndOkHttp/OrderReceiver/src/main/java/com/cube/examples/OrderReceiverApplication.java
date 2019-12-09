@@ -1,9 +1,10 @@
 package com.cube.examples;
 
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.cube.examples", "com.cube.interceptor.spring"})
 public class OrderReceiverApplication {
 
     public static void main(String[] args) {
