@@ -43,7 +43,7 @@ public class OrderTransformerController
         EnhancedOrder enhancedOrder = ordersDao.enhanceOrder(order);
 
         //send for processing
-        Request.Builder requestBuilder = new Request.Builder().url("http://localhost:8082/processEnhancedOrders/");
+        Request.Builder requestBuilder = new Request.Builder().url("http://order-processor:9080/processEnhancedOrders/");
 
         requestBuilder.post( okhttp3.RequestBody.create(MediaType.parse("application/json"), jacksonObjectMapper.writeValueAsString(enhancedOrder)));
         try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
