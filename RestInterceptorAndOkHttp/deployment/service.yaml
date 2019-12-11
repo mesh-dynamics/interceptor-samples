@@ -33,7 +33,7 @@ spec:
       containers:
       - name: order-reciever
         image: cubeiocorp/sample-order-receiver:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         resources:
           requests:
             memory: "500Mi"
@@ -79,6 +79,7 @@ spec:
   ports:
   - port: 9080
     name: http
+    targetPort: 8082
   selector:
     app: order-processor
 ---
@@ -98,16 +99,16 @@ spec:
       containers:
       - name: order-processor
         image: cubeiocorp/sample-order-processor:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         resources:
           requests:
             memory: "500Mi"
             cpu: "50m"
           limits:
-            memory: "100Mi"
+            memory: "500Mi"
             cpu: "100m"
         ports:
-        - containerPort: 9080
+        - containerPort: 8082
         env:
           - name: cube_record_service
             value: "http://demo.dev.cupecorp.io/"
@@ -144,6 +145,7 @@ spec:
   ports:
   - port: 9080
     name: http
+    targetPort: 8081
   selector:
     app: order-transformer
 ---
@@ -163,7 +165,7 @@ spec:
       containers:
       - name: reviews
         image: cubeiocorp/sample-order-transformer:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         resources:
           requests:
             memory: "130Mi"
@@ -172,4 +174,4 @@ spec:
             memory: "200Mi"
             cpu: "200m"
         ports:
-        - containerPort: 9080
+        - containerPort: 8081

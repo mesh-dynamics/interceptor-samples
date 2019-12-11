@@ -1,0 +1,177 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fluentd
+  namespace: staging-mn
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRole
+metadata:
+  name: fluentd
+  namespace: staging-mn
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1beta1
+metadata:
+  name: fluentd
+roleRef:
+  kind: ClusterRole
+  name: fluentd
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: fluentd
+  namespace: staging-mn
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-order
+  namespace: staging-mn
+  labels:
+    app: fluentd-order
+spec:
+  selector:
+    matchLabels:
+      app: fluentd-order
+  template:
+    metadata:
+      labels:
+        app: fluentd-order
+    spec:
+      serviceAccount: fluentd
+      serviceAccountName: fluentd
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      containers:
+      - name: fluentd
+        image: fluent/fluentd:v1.7-1
+        env:
+          - name: FLUENT_UID
+            value: "0"
+        securityContext:
+          runAsUser: 0
+          privileged: true
+        resources:
+          limits:
+            memory: 200Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: varlogtail
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: cube-fluentd-conf-volume
+          mountPath: /fluentd/etc/
+        - name: varcube
+          mountPath: /var/cube
+
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: varlogtail
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: cube-fluentd-conf-volume
+        configMap:
+          name: "cube-fluentd-conf"
+      - name: varcube
+        hostPath:
+          path: /var/cube
+      imagePullSecrets:
+      - name: regcred
+
+---
+apiVersion: v1
+data:
+  fluent.conf: |-
+    
+    # tail cubews (cubews agent) logs
+    <source>
+      @type tail
+      @id in_tail_cube_agent_cubews
+      path /var/log/containers/*order*.log
+      #pos_file /var/log/cube-fluentd-containers-cube-agent-cubews.log.pos
+      tag cube.agent.cubews
+      read_from_head true
+      <parse>
+        @type json
+      </parse>
+    </source>
+
+
+    # tail custom directory
+    # <source>
+    #   @type tail
+    #   @id in_tail_cube_var
+    #   path /var/cube/*.log
+    #   pos_file /var/cube/cube-var-log.pos
+    #   tag cube.var
+    #   read_from_head true
+    #   <parse>
+    #    @type regexp
+    #    expression \[cube\]\[(?<type>(record|replay))\](?<log>.*)
+    #   </parse>
+    # </source>
+    
+ 
+    # filter for parsing cubews agent logs
+    <filter cube.agent.*>
+      @type parser
+      key_name log
+      <parse>
+        @type regexp
+        expression Cube ReqResp:(?<inner_json>.*)$
+      </parse>
+    </filter>
+
+    # send inner_json
+    <filter cube.**>
+      @type parser
+      format json
+      key_name inner_json
+      reserve_data false
+      remove_key_name_field true
+    </filter>
+
+    # http output for cube dogfooding (agent)
+    <match cube.agent.cubews>
+      @type http
+      endpoint http://demo.dev.cubecorp.io/cs/rrbatch
+      open_timeout 5
+      <format>
+        @type json
+      </format>
+      <buffer log>
+        @type memory
+        chunk_limit_records 10
+        flush_interval 10
+      </buffer>
+    </match>
+
+
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: cube-fluentd-conf
+  namespace: staging-mn
+

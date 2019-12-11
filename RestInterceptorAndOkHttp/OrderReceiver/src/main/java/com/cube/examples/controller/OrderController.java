@@ -2,6 +2,8 @@ package com.cube.examples.controller;
 
 import java.net.URI;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +37,12 @@ public class OrderController
     @Autowired
     private ObjectMapper jacksonObjectMapper;
 
+    private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
+
     @GetMapping(path="/", produces = "application/json")
     public Orders getOrders()
     {
+        LOGGER.info("getOrders call Received");
         return ordersDao.getAllOrders();
     }
     
@@ -61,6 +66,7 @@ public class OrderController
         try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
             int code = response.code();
             if (code >= 200 && code <= 299) {
+                LOGGER.info("Response code Received :" + response.code());
                 //Create resource location
                 URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                     .path("/{id}")
@@ -69,7 +75,8 @@ public class OrderController
                 //Send location in response
                 return ResponseEntity.created(location).build();
             } else {
-                throw new IllegalArgumentException();
+                LOGGER.info("Response Received :" + response.toString());
+                throw new IllegalArgumentException("HTTP error response returned by Transformer service "+ code);
             }
         }
     }
