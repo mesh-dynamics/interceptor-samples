@@ -1,0 +1,21 @@
+[
+  {
+    "op": "add",
+    "path": "/spec/template/spec/containers/0/volumeMounts/-",
+    "value" : {
+      "name" : "restinterceptor-staging-as",
+      "mountPath": "/fluentd/etc/conf.d/restinterceptor-staging-as.conf",
+      "subPath": "restinterceptor-staging-as.conf"
+      }
+  },
+  {
+  "op": "add",
+  "path": "/spec/template/spec/volumes/-",
+  "value" : {
+    "name" : "restinterceptor-staging-as",
+    "configMap" : {
+      "name" : "restinterceptor-staging-as"
+      }
+    }
+  }
+]
