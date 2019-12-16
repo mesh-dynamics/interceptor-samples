@@ -1,0 +1,49 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: order-receiver
+  namespace: staging-mn
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: order-receiver
+        namespace: staging-mn
+    spec:
+      containers:
+      - name: order-reciever
+        image: cubeiocorp/sample-order-receiver:latest
+        imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "50m"
+          limits:
+            memory: "500Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 8080
+        env:
+          - name:  logging.level.org.springframework
+            value: "TRACE"
+          - name: cube_record_service
+            value: "http://demo.dev.cupecorp.io/"
+          - name:  cube_mock_service
+            value: "http://demo.dev.cupecorp.io/"
+          - name: customer_dogfood
+            value: "cube"
+          - name: app_dogfood
+            value: "ordermanagement"
+          - name: instance_dogfood
+            value: "prod"
+          - name: service_dogfood
+            value: "wrapper"
+          - name: read_timeout
+            value: "100000"
+          - name: connect_timeout
+            value: "100000"
+          - name: retries
+            value: "3"
+          - name: intent
+            value: "record"
