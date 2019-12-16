@@ -51,7 +51,7 @@ spec:
           - name: customer_dogfood
             value: "cube"
           - name: app_dogfood
-            value: "app"
+            value: "ordermanagement"
           - name: instance_dogfood
             value: "prod"
           - name: service_dogfood
