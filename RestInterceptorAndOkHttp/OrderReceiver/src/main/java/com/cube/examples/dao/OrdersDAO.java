@@ -1,5 +1,7 @@
 package com.cube.examples.dao;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.cube.examples.model.Order;
@@ -9,7 +11,8 @@ import com.cube.examples.model.Orders;
 public class OrdersDAO
 {
     private static Orders list = new Orders();
-    
+
+    private static final Logger LOGGER = LogManager.getLogger(OrdersDAO.class);
     static 
     {
         list.getOrderList().add(new Order(1, 1, new Order.Customer("Lokesh", "Gupta", "xyz@gmail.com")));
@@ -19,6 +22,7 @@ public class OrdersDAO
     
     public Orders getAllOrders()
     {
+        LOGGER.info("getAllOrders DAO call received and the size of the orders to be returned is: " + list.getOrderList().size());
         return list;
     }
     
