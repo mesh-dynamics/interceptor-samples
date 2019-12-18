@@ -44,4 +44,4 @@ spec:
           - name: retries
             value: "3"
           - name: io.md.intent
-            value: "record"
+            value: "mock"
