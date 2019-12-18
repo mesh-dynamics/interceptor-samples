@@ -9,7 +9,7 @@ data:
       @id in_tail_cube_agent_cubews
       path /var/log/containers/*order*.log
       #pos_file /var/log/cube-fluentd-containers-cube-agent-cubews.log.pos
-      tag cube.agent.cubews
+      tag order-management.agent
       read_from_head true
       <parse>
         @type json
@@ -33,17 +33,17 @@ data:
 
 
     # filter for parsing cubews agent logs
-    <filter cube.agent.*>
+    <filter order-management.agent>
       @type parser
       key_name log
       <parse>
         @type regexp
-        expression Cube ReqResp:(?<inner_json>.*)$
+        expression \[Cube ReqResp\](?<inner_json>.*)$
       </parse>
     </filter>
 
     # send inner_json
-    <filter cube.**>
+    <filter order-management.agent>
       @type parser
       format json
       key_name inner_json
@@ -52,7 +52,7 @@ data:
     </filter>
 
     # http output for cube dogfooding (agent)
-    <match cube.agent.cubews>
+    <match order-management.agent>
       @type http
       endpoint http://demo.dev.cubecorp.io/cs/rrbatch
       open_timeout 5
