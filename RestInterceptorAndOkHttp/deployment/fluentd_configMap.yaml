@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+data:
+  restinterceptor-staging-as.conf: |-
+
+    # tail cubews (cubews agent) logs
+    <source>
+      @type tail
+      @id in_tail_cube_agent_cubews
+      path /var/log/containers/*order*.log
+      #pos_file /var/log/cube-fluentd-containers-cube-agent-cubews.log.pos
+      tag order-management.agent
+      read_from_head true
+      <parse>
+        @type json
+      </parse>
+    </source>
+
+
+    # tail custom directory
+    # <source>
+    #   @type tail
+    #   @id in_tail_cube_var
+    #   path /var/cube/*.log
+    #   pos_file /var/cube/cube-var-log.pos
+    #   tag cube.var
+    #   read_from_head true
+    #   <parse>
+    #    @type regexp
+    #    expression \[cube\]\[(?<type>(record|replay))\](?<log>.*)
+    #   </parse>
+    # </source>
+
+
+    # filter for parsing cubews agent logs
+    <filter order-management.agent>
+      @type parser
+      key_name log
+      <parse>
+        @type regexp
+        expression \[Cube ReqResp\](?<inner_json>.*)$
+      </parse>
+    </filter>
+
+    # send inner_json
+    <filter order-management.agent>
+      @type parser
+      format json
+      key_name inner_json
+      reserve_data false
+      remove_key_name_field true
+    </filter>
+
+    # http output for cube dogfooding (agent)
+    <match order-management.agent>
+      @type http
+      endpoint http://demo.dev.cubecorp.io/cs/rrbatch
+      open_timeout 5
+      <format>
+        @type json
+      </format>
+      <buffer log>
+        @type memory
+        chunk_limit_records 10
+        flush_interval 10
+      </buffer>
+    </match>
+
+
+kind: ConfigMap
+metadata:
+  name: restinterceptor-staging-as
+  namespace: logging
