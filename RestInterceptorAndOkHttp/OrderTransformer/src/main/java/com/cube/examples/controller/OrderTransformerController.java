@@ -23,8 +23,8 @@ import com.cube.examples.model.Order;
 
 @RestController
 @RequestMapping(path = "/enhanceAndSendForProcessing")
-public class OrderTransformerController {
-
+public class OrderTransformerController
+{
 	@Autowired
 	private OrdersDAO ordersDao;
 
@@ -34,18 +34,18 @@ public class OrderTransformerController {
 	@Autowired
 	private ObjectMapper jacksonObjectMapper;
 
-	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
+	@PostMapping(path= "/", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> enhanceAndProcessOrder(
 		@RequestBody Order order)
-		throws Exception {
+		throws Exception
+	{
 		//add resource
 		EnhancedOrder enhancedOrder = ordersDao.enhanceOrder(order);
 
 		//send for processing
 		Request.Builder requestBuilder = new Request.Builder().url("http://order-processor:9080/processEnhancedOrders/");
 
-		requestBuilder.post(okhttp3.RequestBody.create(MediaType.parse("application/json"),
-			jacksonObjectMapper.writeValueAsString(enhancedOrder)));
+		requestBuilder.post( okhttp3.RequestBody.create(MediaType.parse("application/json"), jacksonObjectMapper.writeValueAsString(enhancedOrder)));
 		try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
 			int code = response.code();
 			if (code >= 200 && code <= 299) {

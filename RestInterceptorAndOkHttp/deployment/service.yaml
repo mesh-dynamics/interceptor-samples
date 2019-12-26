@@ -5,7 +5,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: order-receiver
-  namespace: staging-as
+  namespace: staging-mn
   labels:
     app: order-receiver
 spec:
@@ -21,14 +21,14 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: order-receiver
-  namespace: staging-as
+  namespace: staging-mn
 spec:
   replicas: 1
   template:
     metadata:
       labels:
         app: order-receiver
-        namespace: staging-as
+        namespace: staging-mn
     spec:
       containers:
       - name: order-reciever
@@ -72,7 +72,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: order-processor
-  namespace: staging-as
+  namespace: staging-mn
   labels:
     app: order-processor
 spec:
@@ -87,14 +87,14 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: order-processor
-  namespace: staging-as
+  namespace: staging-mn
 spec:
   replicas: 1
   template:
     metadata:
       labels:
         app: order-processor
-        namespace: staging-as
+        namespace: staging-mn
     spec:
       containers:
       - name: order-processor
@@ -138,7 +138,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: order-transformer
-  namespace: staging-as
+  namespace: staging-mn
   labels:
     app: order-transformer
 spec:
@@ -153,14 +153,14 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: order-transformer
-  namespace: staging-as
+  namespace: staging-mn
 spec:
   replicas: 1
   template:
     metadata:
       labels:
         app: order-transformer
-        namespace: staging-as
+        namespace: staging-mn
     spec:
       containers:
       - name: reviews

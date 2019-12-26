@@ -3,14 +3,14 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: fluentd
-  namespace: staging-as
+  namespace: staging-mn
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRole
 metadata:
   name: fluentd
-  namespace: staging-as
+  namespace: staging-mn
 rules:
 - apiGroups:
   - ""
@@ -33,14 +33,14 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: fluentd
-  namespace: staging-as
+  namespace: staging-mn
 
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: fluentd-order
-  namespace: staging-as
+  namespace: staging-mn
   labels:
     app: fluentd-order
 spec:
@@ -172,4 +172,4 @@ kind: ConfigMap
 metadata:
   creationTimestamp: null
   name: cube-fluentd-conf
-  namespace: staging-as
+  namespace: staging-mn
