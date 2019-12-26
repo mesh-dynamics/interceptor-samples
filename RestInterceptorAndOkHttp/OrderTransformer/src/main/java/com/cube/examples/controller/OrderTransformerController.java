@@ -37,7 +37,7 @@ public class OrderTransformerController {
 	private ObjectMapper jacksonObjectMapper;
 
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
-	public Mono<ResponseEntity<Object>> enhanceAndProcessOrder(ServerHttpRequest serverHttpRequest,
+	public Mono<ResponseEntity<Object>> enhanceAndProcessOrder(
 		@RequestBody Order order)
 		throws Exception {
 		//add resource
@@ -53,12 +53,12 @@ public class OrderTransformerController {
 			int code = response.code();
 			if (code >= 200 && code <= 299) {
 				//Create resource location
-				URI location = UriComponentsBuilder.fromHttpRequest(serverHttpRequest)
-					.path("/{id}")
-					.buildAndExpand(order.getId())
-					.toUri();
+//				URI location = UriComponentsBuilder.fromHttpRequest(serverHttpRequest)
+//					.path("/{id}")
+//					.buildAndExpand(order.getId())
+//					.toUri();
 				//Send location in response
-				return Mono.just(ResponseEntity.created(location).build());
+				return Mono.just(ResponseEntity.ok(order.getId()));
 			} else {
 				throw new IllegalArgumentException();
 			}
