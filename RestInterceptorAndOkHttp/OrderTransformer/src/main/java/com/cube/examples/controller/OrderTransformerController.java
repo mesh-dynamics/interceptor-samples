@@ -23,42 +23,42 @@ import com.cube.examples.model.Order;
 
 @RestController
 @RequestMapping(path = "/enhanceAndSendForProcessing")
-public class OrderTransformerController
-{
-    @Autowired
-    private OrdersDAO ordersDao;
+public class OrderTransformerController {
 
-    @Autowired
-    private OkHttpClient httpClient;
+	@Autowired
+	private OrdersDAO ordersDao;
 
-    @Autowired
-    private ObjectMapper jacksonObjectMapper;
+	@Autowired
+	private OkHttpClient httpClient;
 
-    @PostMapping(path= "/", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Object> enhanceAndProcessOrder(
-                        @RequestBody Order order)
-                 throws Exception 
-    {
-        //add resource
-        EnhancedOrder enhancedOrder = ordersDao.enhanceOrder(order);
+	@Autowired
+	private ObjectMapper jacksonObjectMapper;
 
-        //send for processing
-        Request.Builder requestBuilder = new Request.Builder().url("http://order-processor:9080/processEnhancedOrders/");
+	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<Object> enhanceAndProcessOrder(
+		@RequestBody Order order)
+		throws Exception {
+		//add resource
+		EnhancedOrder enhancedOrder = ordersDao.enhanceOrder(order);
 
-        requestBuilder.post( okhttp3.RequestBody.create(MediaType.parse("application/json"), jacksonObjectMapper.writeValueAsString(enhancedOrder)));
-        try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
-            int code = response.code();
-            if (code >= 200 && code <= 299) {
-                //Create resource location
-                URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(order.getId())
-                    .toUri();
-                //Send location in response
-                return ResponseEntity.created(location).build();
-            } else {
-                throw new IllegalArgumentException();
-            }
-        }
-    }
+		//send for processing
+		Request.Builder requestBuilder = new Request.Builder().url("http://order-processor:9080/processEnhancedOrders/");
+
+		requestBuilder.post(okhttp3.RequestBody.create(MediaType.parse("application/json"),
+			jacksonObjectMapper.writeValueAsString(enhancedOrder)));
+		try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
+			int code = response.code();
+			if (code >= 200 && code <= 299) {
+				//Create resource location
+				URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+					.path("/{id}")
+					.buildAndExpand(order.getId())
+					.toUri();
+				//Send location in response
+				return ResponseEntity.created(location).build();
+			} else {
+				throw new IllegalArgumentException();
+			}
+		}
+	}
 }
