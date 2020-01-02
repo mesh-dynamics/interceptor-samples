@@ -9,7 +9,7 @@ import org.springframework.http.client.reactive.JettyClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.cube.interceptor.spring.WebFluxClientInterceptor;
+import com.cube.spring.logging.interceptor.WebFluxClientInterceptor;
 
 @Component
 public class SimpleWebClientConfiguration {

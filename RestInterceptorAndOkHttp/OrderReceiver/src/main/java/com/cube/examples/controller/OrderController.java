@@ -24,7 +24,7 @@ import okhttp3.Response;
 import com.cube.examples.dao.OrdersDAO;
 import com.cube.examples.model.Order;
 import com.cube.examples.model.Orders;
-import com.cube.interceptor.spring.Constants;
+import com.cube.spring.logging.utils.Constants;
 
 @RestController
 @RequestMapping(path = "/orders")
@@ -68,7 +68,11 @@ public class OrderController {
 				serverHttpRequest.getHeaders().get(Constants.X_B3_SPAN_ID).get(0));
 
 //		Request.Builder requestBuilder = new Request.Builder()
-//			.url("http://localhost:8081/enhanceAndSendForProcessing/");
+//			.url("http://localhost:8081/enhanceAndSendForProcessing/")
+//			.header(Constants.X_B3_TRACE_ID,
+//				serverHttpRequest.getHeaders().get(Constants.X_B3_TRACE_ID).get(0))
+//			.header(Constants.X_B3_SPAN_ID,
+//				serverHttpRequest.getHeaders().get(Constants.X_B3_SPAN_ID).get(0));
 
 		requestBuilder.post(okhttp3.RequestBody.create(MediaType.parse("application/json"),
 			jacksonObjectMapper.writeValueAsString(order)));
