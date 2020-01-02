@@ -24,6 +24,7 @@ import okhttp3.Response;
 import com.cube.examples.dao.OrdersDAO;
 import com.cube.examples.model.Order;
 import com.cube.examples.model.Orders;
+import com.cube.interceptor.spring.Constants;
 
 @RestController
 @RequestMapping(path = "/orders")
@@ -40,13 +41,13 @@ public class OrderController {
 
 	private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
 
-	@GetMapping(path = "/", produces = "application/json")
+	@GetMapping(path = "/getOrders", produces = "application/json")
 	public Orders getOrders() {
 		LOGGER.info("getOrders call Received");
 		return ordersDao.getAllOrders();
 	}
 
-	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
+	@PostMapping(path = "/postOrder", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> placeOrders(ServerHttpRequest serverHttpRequest,
 		@RequestBody Order order)
 		throws Exception {
@@ -60,7 +61,14 @@ public class OrderController {
 		// send it to order transformer
 		// send for processing
 		Request.Builder requestBuilder = new Request.Builder()
-			.url("http://order-transformer:9080/enhanceAndSendForProcessing/");
+			.url("http://order-transformer:9080/enhanceAndSendForProcessing/")
+			.header(Constants.X_B3_TRACE_ID,
+				serverHttpRequest.getHeaders().get(Constants.X_B3_TRACE_ID).get(0))
+			.header(Constants.X_B3_SPAN_ID,
+				serverHttpRequest.getHeaders().get(Constants.X_B3_SPAN_ID).get(0));
+
+//		Request.Builder requestBuilder = new Request.Builder()
+//			.url("http://localhost:8081/enhanceAndSendForProcessing/");
 
 		requestBuilder.post(okhttp3.RequestBody.create(MediaType.parse("application/json"),
 			jacksonObjectMapper.writeValueAsString(order)));

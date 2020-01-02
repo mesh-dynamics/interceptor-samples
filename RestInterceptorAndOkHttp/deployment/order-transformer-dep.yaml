@@ -1,19 +1,19 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: order-receiver
+  name: order-transformer
   namespace: staging-mn
 spec:
   replicas: 1
   template:
     metadata:
       labels:
-        app: order-receiver
+        app: order-transformer
         namespace: staging-mn
     spec:
       containers:
-      - name: order-receiver
-        image: cubeiocorp/sample-order-receiver:latest
+      - name: order-transformer
+        image: cubeiocorp/sample-order-transformer:latest
         imagePullPolicy: Always
         resources:
           requests:
@@ -36,7 +36,7 @@ spec:
           - name: io.md.instance
             value: "test-order"
           - name: io.md.service
-            value: "OrderReceiver"
+            value: "OrderTransformer"
           - name: read_timeout
             value: "100000"
           - name: connect_timeout
@@ -44,4 +44,4 @@ spec:
           - name: retries
             value: "3"
           - name: io.md.intent
-            value: "mock"
+            value: "record"

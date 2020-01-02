@@ -12,7 +12,7 @@ spec:
         namespace: staging-mn
     spec:
       containers:
-      - name: order-reciever
+      - name: order-receiver
         image: cubeiocorp/sample-order-receiver:latest
         imagePullPolicy: Always
         resources:

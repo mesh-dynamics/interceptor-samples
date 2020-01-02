@@ -47,6 +47,7 @@ public class OrderTransformerController {
 			.uri("/processEnhancedOrders/")
 			.contentType(org.springframework.http.MediaType.APPLICATION_JSON)
 			.accept(org.springframework.http.MediaType.APPLICATION_JSON)
+			.headers(httpHeaders -> httpHeaders.addAll(serverHttpRequest.getHeaders()))
 			.body(Mono.just(enhancedOrder), EnhancedOrder.class)
 			.exchange();
 

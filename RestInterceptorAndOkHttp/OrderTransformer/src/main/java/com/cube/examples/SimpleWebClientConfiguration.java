@@ -15,6 +15,7 @@ import com.cube.interceptor.spring.WebFluxClientInterceptor;
 public class SimpleWebClientConfiguration {
 
 	private static final String BASE_URL = "http://order-processor:9080";
+//	private static final String BASE_URL = "http://localhost:8082";
 
 	@Bean
 	public WebClient defaultWebClient() {
