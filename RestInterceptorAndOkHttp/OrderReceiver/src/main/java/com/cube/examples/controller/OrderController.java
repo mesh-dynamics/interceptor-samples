@@ -30,6 +30,9 @@ import com.cube.spring.logging.utils.Constants;
 @RequestMapping(path = "/orders")
 public class OrderController {
 
+	public static final String URL = "http://order-transformer:9080/enhanceAndSendForProcessing/";
+	//public static final String URL = "http://localhost:8081/enhanceAndSendForProcessing/";
+
 	@Autowired
 	private OrdersDAO ordersDao;
 
@@ -61,18 +64,11 @@ public class OrderController {
 		// send it to order transformer
 		// send for processing
 		Request.Builder requestBuilder = new Request.Builder()
-			.url("http://order-transformer:9080/enhanceAndSendForProcessing/")
+			.url(URL)
 			.header(Constants.X_B3_TRACE_ID,
 				serverHttpRequest.getHeaders().get(Constants.X_B3_TRACE_ID).get(0))
 			.header(Constants.X_B3_SPAN_ID,
 				serverHttpRequest.getHeaders().get(Constants.X_B3_SPAN_ID).get(0));
-
-//		Request.Builder requestBuilder = new Request.Builder()
-//			.url("http://localhost:8081/enhanceAndSendForProcessing/")
-//			.header(Constants.X_B3_TRACE_ID,
-//				serverHttpRequest.getHeaders().get(Constants.X_B3_TRACE_ID).get(0))
-//			.header(Constants.X_B3_SPAN_ID,
-//				serverHttpRequest.getHeaders().get(Constants.X_B3_SPAN_ID).get(0));
 
 		requestBuilder.post(okhttp3.RequestBody.create(MediaType.parse("application/json"),
 			jacksonObjectMapper.writeValueAsString(order)));
