@@ -173,4 +173,3 @@ metadata:
   creationTimestamp: null
   name: cube-fluentd-conf
   namespace: staging-mn
-

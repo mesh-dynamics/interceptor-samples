@@ -37,6 +37,6 @@ public class OrderProcessorController
             .buildAndExpand(order.getId())
             .toUri();
         //Send location in response
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(order); //send input as body for demo
     }
 }

@@ -2,20 +2,19 @@ package com.cube.examples.controller;
 
 import java.net.URI;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import reactor.core.publisher.Mono;
 
 import com.cube.examples.dao.OrdersDAO;
 import com.cube.examples.model.EnhancedOrder;
@@ -23,42 +22,51 @@ import com.cube.examples.model.Order;
 
 @RestController
 @RequestMapping(path = "/enhanceAndSendForProcessing")
-public class OrderTransformerController
-{
-    @Autowired
-    private OrdersDAO ordersDao;
+public class OrderTransformerController {
 
-    @Autowired
-    private OkHttpClient httpClient;
+	private static final Logger LOGGER = LogManager.getLogger(OrderTransformerController.class);
 
-    @Autowired
-    private ObjectMapper jacksonObjectMapper;
+	@Autowired
+	private OrdersDAO ordersDao;
 
-    @PostMapping(path= "/", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Object> enhanceAndProcessOrder(
-                        @RequestBody Order order)
-                 throws Exception 
-    {
-        //add resource
-        EnhancedOrder enhancedOrder = ordersDao.enhanceOrder(order);
+	@Autowired
+	private WebClient webClient;
 
-        //send for processing
-        Request.Builder requestBuilder = new Request.Builder().url("http://order-processor:9080/processEnhancedOrders/");
+	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
+	public Mono<ResponseEntity<String>> enhanceAndProcessOrder(ServerHttpRequest serverHttpRequest,
+		@RequestBody Order order)
+		throws Exception {
+		//add resource
+		EnhancedOrder enhancedOrder = ordersDao.enhanceOrder(order);
 
-        requestBuilder.post( okhttp3.RequestBody.create(MediaType.parse("application/json"), jacksonObjectMapper.writeValueAsString(enhancedOrder)));
-        try (Response response = httpClient.newCall(requestBuilder.build()).execute()) {
-            int code = response.code();
-            if (code >= 200 && code <= 299) {
-                //Create resource location
-                URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(order.getId())
-                    .toUri();
-                //Send location in response
-                return ResponseEntity.created(location).build();
-            } else {
-                throw new IllegalArgumentException();
-            }
-        }
-    }
+		//send for processing
+		Mono<ResponseEntity<String>> result = webClient.post()
+			.uri("/processEnhancedOrders/")
+			.contentType(org.springframework.http.MediaType.APPLICATION_JSON)
+			.accept(org.springframework.http.MediaType.APPLICATION_JSON)
+			.headers(httpHeaders -> httpHeaders.addAll(serverHttpRequest.getHeaders()))
+			.body(Mono.just(enhancedOrder), EnhancedOrder.class)
+			.exchange()
+			.flatMap(response -> response.toEntity(String.class))
+			.flatMap(entity -> {
+				int code = entity.getStatusCodeValue();
+				if (code >= 200 && code <= 299) {
+					LOGGER.info("Response code Received :" + code);
+					//Create resource location
+					URI location = UriComponentsBuilder.fromHttpRequest(serverHttpRequest)
+						.path("/{id}")
+						.buildAndExpand(order.getId())
+						.toUri();
+					//Send location in response
+					return Mono.just(ResponseEntity.created(location).build());
+				} else {
+					LOGGER.info("Response Received :" + entity.toString());
+					throw new IllegalArgumentException(
+						"HTTP error response returned by Processor service " + code);
+				}
+			});
+
+		return result;
+
+	}
 }

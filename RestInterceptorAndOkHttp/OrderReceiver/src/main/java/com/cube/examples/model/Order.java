@@ -1,7 +1,5 @@
 package com.cube.examples.model;
 
-import java.util.List;
-
 public class Order {
 
     public Order() {

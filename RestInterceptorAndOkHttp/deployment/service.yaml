@@ -31,7 +31,7 @@ spec:
         namespace: staging-mn
     spec:
       containers:
-      - name: order-reciever
+      - name: order-receiver
         image: cubeiocorp/sample-order-receiver:latest
         imagePullPolicy: Always
         resources:
@@ -163,7 +163,7 @@ spec:
         namespace: staging-mn
     spec:
       containers:
-      - name: reviews
+      - name: order-transformer
         image: cubeiocorp/sample-order-transformer:latest
         imagePullPolicy: Always
         resources:
