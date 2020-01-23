@@ -38,18 +38,9 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/io.freefair.okhttp-spring-boot/okhttp-spring-boot-autoconfigure -->
 		<dependency>
-			<groupId>com.cube.interceptor</groupId>
-			<artifactId>spring-interceptor</artifactId>
+			<groupId>com.cube.logging</groupId>
+			<artifactId>interceptor</artifactId>
 			<version>0.0.1</version>
-			<!--			<scope>system</scope>-->
-			<!--			<systemPath>${project.basedir}/src/main/lib/spring-interceptor-0.0.1.jar</systemPath>-->
-		</dependency>
-		<dependency>
-			<groupId>io.cube</groupId>
-			<artifactId>agent</artifactId>
-			<version>1.0.1</version>
-			<!--<scope>system</scope>-->
-			<!--<systemPath>${project.basedir}/src/main/lib/agent-1.0.0-jar-with-dependencies.jar</systemPath>-->
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

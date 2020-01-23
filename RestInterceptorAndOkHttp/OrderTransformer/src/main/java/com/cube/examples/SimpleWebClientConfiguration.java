@@ -9,13 +9,14 @@ import org.springframework.http.client.reactive.JettyClientHttpConnector;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import com.cube.spring.logging.interceptor.WebFluxClientInterceptor;
+import com.cube.logging.spring.interceptor.WebFluxClientInterceptor;
+
 
 @Component
 public class SimpleWebClientConfiguration {
 
 	private static final String BASE_URL = "http://order-processor:9080";
-//	private static final String BASE_URL = "http://localhost:8082";
+    //private static final String BASE_URL = "http://localhost:8082";
 
 	@Bean
 	public WebClient defaultWebClient() {

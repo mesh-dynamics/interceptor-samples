@@ -16,6 +16,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.md.constants.Constants;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -24,7 +25,6 @@ import okhttp3.Response;
 import com.cube.examples.dao.OrdersDAO;
 import com.cube.examples.model.Order;
 import com.cube.examples.model.Orders;
-import com.cube.spring.logging.utils.Constants;
 
 @RestController
 @RequestMapping(path = "/orders")
@@ -65,10 +65,10 @@ public class OrderController {
 		// send for processing
 		Request.Builder requestBuilder = new Request.Builder()
 			.url(URL)
-			.header(Constants.X_B3_TRACE_ID,
-				serverHttpRequest.getHeaders().get(Constants.X_B3_TRACE_ID).get(0))
-			.header(Constants.X_B3_SPAN_ID,
-				serverHttpRequest.getHeaders().get(Constants.X_B3_SPAN_ID).get(0));
+			.header(Constants.DEFAULT_TRACE_FIELD,
+				serverHttpRequest.getHeaders().get(Constants.DEFAULT_TRACE_FIELD).get(0))
+			.header(Constants.DEFAULT_SPAN_FIELD,
+				serverHttpRequest.getHeaders().get(Constants.DEFAULT_SPAN_FIELD).get(0));
 
 		requestBuilder.post(okhttp3.RequestBody.create(MediaType.parse("application/json"),
 			jacksonObjectMapper.writeValueAsString(order)));
