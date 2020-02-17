@@ -58,11 +58,11 @@
 			<artifactId>gson</artifactId>
 			<version>2.8.5</version>
 		</dependency>
-		<dependency>
+<!--		<dependency>
 			<groupId>io.jaegertracing</groupId>
 			<artifactId>jaeger-client</artifactId>
-			<version>0.32.0</version>
-		</dependency>
+			<version>1.1.0</version>
+		</dependency>-->
 		<dependency>
 			<!-- Needed for ClientBuilder; version is not aligned with version.jersey -->
 			<groupId>javax.ws.rs</groupId>
@@ -81,7 +81,7 @@
 		<dependency>
 			<groupId>com.cube.logging</groupId>
 			<artifactId>interceptor</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
