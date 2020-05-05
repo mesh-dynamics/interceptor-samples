@@ -1,0 +1,19 @@
+---
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  jpa:
+#    show-sql: false
+
+jwt:
+  clientId: glee-o-meter
+  client-secret: secret
+  accessTokenValidititySeconds: 120
+  refreshTokenValiditySeconds: 1000
+
+logging:
+  level:
+    root: DEBUG
+    org.springframework.web: DEBUG
+    com.howtodoinjava: DEBUG
+    org.hibernate: DEBUG

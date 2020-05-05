@@ -1,0 +1,12 @@
+#server.port=8083
+#logging.path=/tmp/
+#logging.file=myapp.log
+spring:
+    jpa:
+    #    show-sql: false
+    mvc.favicon.enabled: false
+jwt:
+    clientId: order-receiver
+    client-secret: secret
+    accessTokenValidititySeconds: 10000
+    refreshTokenValiditySeconds: 1000

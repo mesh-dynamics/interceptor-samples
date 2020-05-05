@@ -1,6 +1,7 @@
 package com.cube.examples.controller;
 
 import java.net.URI;
+import java.security.Principal;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,8 +46,8 @@ public class OrderController {
 	private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
 
 	@GetMapping(path = "/getOrders", produces = "application/json")
-	public Orders getOrders() {
-		LOGGER.info("getOrders call Received");
+	public Orders getOrders(Principal principal) {
+		LOGGER.info("getOrders call Received from "+ principal.getName());
 		return ordersDao.getAllOrders();
 	}
 
