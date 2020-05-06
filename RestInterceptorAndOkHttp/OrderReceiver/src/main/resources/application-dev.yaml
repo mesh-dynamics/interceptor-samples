@@ -6,7 +6,7 @@ spring:
 #    show-sql: false
 
 jwt:
-  clientId: glee-o-meter
+  clientId: order-receiver
   client-secret: secret
   accessTokenValidititySeconds: 120
   refreshTokenValiditySeconds: 1000
