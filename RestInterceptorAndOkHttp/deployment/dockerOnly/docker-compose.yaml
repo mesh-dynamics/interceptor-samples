@@ -12,8 +12,14 @@ services:
       - transformer
     volumes:
       - ./samplerconfig.json:/cube/agent/samplerconfig.json
+      - /var/log/td-agent/order-receiver.log:/cube/agent/logs/order-receiver.log
       - ./order_receiver_agent.conf:/cube/agent/agent.conf
-      - /Users/muthumani/cube/Development/logs/order-receiver.log:/cube/agent/logs/order-receiver.log
+      - ./order_receiver_agent_normal.conf:/cube/agent/agent_normal.conf
+      - ./order_receiver_agent_record.conf:/cube/agent/agent_record.conf
+      - ./order_receiver_agent_mock.conf:/cube/agent/agent_mock.conf
+      - ./change_to_normal.sh:/cube/agent/change_to_normal.sh
+      - ./change_to_record.sh:/cube/agent/change_to_record.sh
+      - ./change_to_mock.sh:/cube/agent/change_to_mock.sh
   transformer:
     image: cubeiocorp/sample-order-transformer
     container_name: transformer
@@ -24,5 +30,11 @@ services:
       - io.md.samplerconfig.path=/cube/agent/samplerconfig.json
     volumes:
       - ./samplerconfig.json:/cube/agent/samplerconfig.json
+      - /var/log/td-agent/order-transformer.log:/cube/agent/logs/order-transformer.log
       - ./order_transformer_agent.conf:/cube/agent/agent.conf
-      - /Users/muthumani/cube/Development/logs/order-transformer.log:/cube/agent/logs/order-transformer.log
+      - ./order_transformer_agent_normal.conf:/cube/agent/agent_normal.conf
+      - ./order_transformer_agent_record.conf:/cube/agent/agent_record.conf
+      - ./order_transformer_agent_mock.conf:/cube/agent/agent_mock.conf
+      - ./change_to_normal.sh:/cube/agent/change_to_normal.sh
+      - ./change_to_record.sh:/cube/agent/change_to_record.sh
+      - ./change_to_mock.sh:/cube/agent/change_to_mock.sh
