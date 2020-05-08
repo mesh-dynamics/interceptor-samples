@@ -1,0 +1,28 @@
+version: '3'
+services:
+  receiver:
+    image: cubeiocorp/sample-order-receiver
+    ports:
+      - "8080:8080"
+    environment:
+      - spring_profiles_active=replay
+      - io.md.commonconfig.path=/cube/agent/agent.conf
+      - io.md.samplerconfig.path=/cube/agent/samplerconfig.json
+    depends_on:
+      - transformer
+    volumes:
+      - ./samplerconfig.json:/cube/agent/samplerconfig.json
+      - ./order_receiver_agent.conf:/cube/agent/agent.conf
+      - /Users/muthumani/cube/Development/logs/order-receiver.log:/cube/agent/logs/order-receiver.log
+  transformer:
+    image: cubeiocorp/sample-order-transformer
+    container_name: transformer
+    ports:
+      - "8081:8081"
+    environment:
+      - io.md.commonconfig.path=/cube/agent/agent.conf
+      - io.md.samplerconfig.path=/cube/agent/samplerconfig.json
+    volumes:
+      - ./samplerconfig.json:/cube/agent/samplerconfig.json
+      - ./order_transformer_agent.conf:/cube/agent/agent.conf
+      - /Users/muthumani/cube/Development/logs/order-transformer.log:/cube/agent/logs/order-transformer.log

@@ -40,7 +40,8 @@ import com.cube.examples.model.Orders;
 public class OrderController {
 
 	//public static final String URL = "http://order-transformer:9080/enhanceAndSendForProcessing/";
-	public static final String URL = "http://localhost:8081/enhanceAndSendForProcessing/";
+	//public static final String URL = "http://localhost:8081/enhanceAndSendForProcessing/";
+	public static final String URL = "http://transformer:8081/enhanceAndSendForProcessing/";
 
 	@Autowired
 	private OrdersDAO ordersDao;

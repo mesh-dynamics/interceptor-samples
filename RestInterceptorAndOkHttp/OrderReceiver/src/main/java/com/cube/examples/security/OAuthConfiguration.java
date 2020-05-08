@@ -14,6 +14,8 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.E
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
+import io.cube.spring.ingress.MockJwtAccessTokenConverter;
+
 //@Profile("prod")
 @Configuration
 @EnableAuthorizationServer
