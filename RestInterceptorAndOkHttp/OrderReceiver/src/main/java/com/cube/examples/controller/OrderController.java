@@ -4,6 +4,7 @@ import java.net.URI;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.QueryParam;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -48,6 +50,18 @@ public class OrderController {
 	public Orders getOrders(Principal principal) {
 		LOGGER.info("getOrders call Received from "+ principal.getName());
 		return ordersDao.getAllOrders();
+	}
+
+	@GetMapping(path = "/getOrderByIndex", produces = "application/json")
+	public Order getOrderByIndex(Principal principal, @RequestParam("index") String index) {
+		LOGGER.info("getOrderByIndex call Received from "+ principal.getName());
+		return ordersDao.getOrderByIndex(Integer.parseInt(index));
+	}
+
+	@GetMapping(path = "/getOrderByIndexQP", produces = "application/json")
+	public Order getOrderByIndexQP(Principal principal, @QueryParam("index") String index) {
+		LOGGER.info("getOrderByIndexQP call Received from "+ principal.getName());
+		return ordersDao.getOrderByIndex(Integer.parseInt(index));
 	}
 
 	@PostMapping(path = "/postOrder", consumes = "application/json", produces = "application/json")

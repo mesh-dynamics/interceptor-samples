@@ -29,4 +29,8 @@ public class OrdersDAO
     public void placeOrder(Order order) {
         list.getOrderList().add(order);
     }
+
+    public Order getOrderByIndex(int index) {
+        return list.getOrderList().get(index);
+    }
 }
