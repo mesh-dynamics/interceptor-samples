@@ -24,7 +24,13 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
 	</properties>
-
+	<repositories>
+		<repository>
+			<id>io.cube</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/cube-io-corp/interceptor-framework</url>
+		</repository>
+		</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -84,17 +90,17 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>io.cube</groupId>
-			<artifactId>md-springboot-resttemplate-interceptor</artifactId>
-			<version>1.2.3</version>
-		</dependency>
+  <groupId>io.cube</groupId>
+  <artifactId>md-springboot-resttemplate-interceptor</artifactId>
+  <version>1.2.4</version>
+</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId> 
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
