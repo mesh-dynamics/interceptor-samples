@@ -48,7 +48,7 @@ steps:
       password:
         from_secret: EMAIL_PASSWORD
       from: email.sender@meshdynamics.io
-      recipients: [ a80f6254.meshdynamics.io@amer.teams.ms ]
+      recipients: [ a80f6254.meshdynamics.io@amer.teams.ms, developers@meshdynamics.io ]
     when:
       status:
       - failure

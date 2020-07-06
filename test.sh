@@ -77,6 +77,7 @@ main() {
   then
 	  apk add jq
   fi
+  sleep 60
   CUBE_ENDPOINT=https://demo.dev.cubecorp.io
   TEMPLATE=DEFAULT
   USER_ID=CubeCorp
