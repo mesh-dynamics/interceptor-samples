@@ -9,7 +9,11 @@ import javax.ws.rs.QueryParam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +47,9 @@ public class OrderController {
 
 	@Autowired
 	private ObjectMapper jacksonObjectMapper;
+
+	@Value("classpath:large_payload.json")
+	Resource resourceFile;
 
 	private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
 
@@ -92,4 +99,44 @@ public class OrderController {
 					"HTTP error response returned by Transformer service " + responseEntity.getStatusCode());
 			}
 		}
+
+	@GetMapping(path = "/largePayload", produces = "application/json")
+	public ResponseEntity<Object> randomLargePayload() throws Exception {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		String largePayloadURL = URL.concat("/largePayload");
+		ResponseEntity<String> responseEntity = restTemplate.postForEntity(largePayloadURL, resourceFile, String.class);
+
+		if (responseEntity.getStatusCode().is2xxSuccessful()) {
+			LOGGER.info("Response code Received :" + responseEntity.getStatusCode());
+			return ResponseEntity.ok(resourceFile);
+		} else {
+			LOGGER.info("Response Received :" + responseEntity.toString());
+			throw new IllegalArgumentException(
+				"HTTP error response returned by Transformer service " + responseEntity.getStatusCode());
+		}
+
+	}
+
+	@GetMapping(path = "/testChunkedResponse", produces = "text/html")
+	public ResponseEntity<String> testChunkedResponse() throws Exception {
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("User-Agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
+		headers.add("Accept", "*/*");
+		HttpEntity entity = new HttpEntity(headers);
+
+		String chunkedRespURL = "http://jsonplaceholder.typicode.com/todos";
+		ResponseEntity<String> responseEntity = restTemplate.exchange(chunkedRespURL, HttpMethod.GET, entity, String.class);
+
+		if (responseEntity.getStatusCode().is2xxSuccessful()) {
+			LOGGER.info("Response code Received :" + responseEntity.getStatusCode());
+			return responseEntity;
+		} else {
+			LOGGER.info("Response Received :" + responseEntity.toString());
+			throw new IllegalArgumentException(
+				"HTTP error response returned by Transformer service " + responseEntity.getStatusCode());
+		}
+
+	}
+
 }
