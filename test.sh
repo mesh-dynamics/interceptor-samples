@@ -19,6 +19,17 @@ generate_traffic() {
     curl --location --request GET 'http://springboot.dev.cubecorp.io:8080/orders/getOrders/' --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib3JkZXJzIl0sInVzZXJfbmFtZSI6ImFkbWluQGFkbWluLmNvbSIsInNjb3BlIjpbInJlYWQiLCJ3cml0ZSJdLCJleHAiOjE1ODg4MzczMDksImF1dGhvcml0aWVzIjpbIkFETUlOIl0sImp0aSI6ImQyMGEyYWY0LTNmOTYtNDdkMS05ZTM4LTRhMWI4MmE1MjQ1YiIsImNsaWVudF9pZCI6Im9yZGVyLXJlY2VpdmVyIn0.UZIlg5nGhL5QGpHrlupTI8qGFTwIS3jnbnaYNpXeRqQ' --header 'Content-Type: application/json'
     sleep 1
   done
+
+curl --location --request POST 'http://springboot.dev.cubecorp.io:8080/orders/postOrder/' --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsib3JkZXJzIl0sInVzZXJfbmFtZSI6ImFkbWluQGFkbWluLmNvbSIsInNjb3BlIjpbInJlYWQiLCJ3cml0ZSJdLCJleHAiOjE1ODg4MzczMDksImF1dGhvcml0aWVzIjpbIkFETUlOIl0sImp0aSI6ImQyMGEyYWY0LTNmOTYtNDdkMS05ZTM4LTRhMWI4MmE1MjQ1YiIsImNsaWVudF9pZCI6Im9yZGVyLXJlY2VpdmVyIn0.UZIlg5nGhL5QGpHrlupTI8qGFTwIS3jnbnaYNpXeRqQ' --header 'Content-Type: application/json' --data-raw '{
+	"id": 5,
+    "productId": 1,
+    "customer": {
+        "firstName": "Lokesh1",
+        "lastName": "Gupta1",
+        "email": "xyz@gmail.com"
+    }
+}'
+
 }
 
 stop_recording() {
@@ -27,7 +38,7 @@ stop_recording() {
 }
 
 replay() {
-  BODY="endPoint=$REPLAY_ENDPOINT&instanceId=$INSTANCE_ID&templateSetVer=$TEMPLATE&userId=$USER_ID"
+  BODY="endPoint=$REPLAY_ENDPOINT&instanceId=$INSTANCE_ID-replay&templateSetVer=$TEMPLATE&userId=$USER_ID"
   COUNT=0
 	while [ "$http_code" != "200" ] || [ "$REPLAY_ID" = "none" ] && [ "$COUNT" != "5" ]; do
   resp=$(curl -sw "%{http_code}" -X POST \
