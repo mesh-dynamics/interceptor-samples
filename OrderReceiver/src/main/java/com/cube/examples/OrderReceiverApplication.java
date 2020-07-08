@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
+import io.cube.spring.egress.RestTemplateDataInterceptor;
 import io.cube.spring.egress.RestTemplateMockInterceptor;
 import io.cube.spring.egress.RestTemplateTracingInterceptor;
 
@@ -20,6 +21,7 @@ public class OrderReceiverApplication {
         ArrayList<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
         interceptors.add(new RestTemplateMockInterceptor());
         interceptors.add(new RestTemplateTracingInterceptor());
+        interceptors.add(new RestTemplateDataInterceptor());
         restTemplate.setInterceptors(interceptors);
         return restTemplate;
     }
