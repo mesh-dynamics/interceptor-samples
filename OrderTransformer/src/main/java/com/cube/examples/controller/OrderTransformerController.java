@@ -40,10 +40,6 @@ public class OrderTransformerController {
 	@Autowired
 	private OrdersDAO ordersDao;
 
-	@Autowired
-	RestTemplate restTemplate;
-
-
 //	@Autowired
 //	private WebClient webClient;
 
@@ -85,4 +81,11 @@ public class OrderTransformerController {
 						.toUri();
 		return ResponseEntity.created(location).build();
 	}
+
+	@PostMapping(path = "/largePayload", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<Object> largePayload(@RequestBody String payload) {
+		return ResponseEntity.ok(payload);
+	}
+
+
 }

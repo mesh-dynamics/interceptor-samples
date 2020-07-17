@@ -17,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,6 +69,12 @@ public class OrderController {
 	@GetMapping(path = "/getOrderByIndexQP", produces = "application/json")
 	public Order getOrderByIndexQP(Principal principal, @QueryParam("index") String index) {
 		LOGGER.info("getOrderByIndexQP call Received from "+ principal.getName());
+		return ordersDao.getOrderByIndex(Integer.parseInt(index));
+	}
+
+	@GetMapping(path = "/getOrderByIndexPV/{index}", produces = "application/json")
+	public Order getOrderByIndexPV(Principal principal, @PathVariable("index") String index) {
+		LOGGER.info("getOrderByIndexPV call Received from "+ principal.getName());
 		return ordersDao.getOrderByIndex(Integer.parseInt(index));
 	}
 
