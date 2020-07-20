@@ -1,6 +1,9 @@
 package com.cube.examples.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,13 +12,16 @@ import javax.ws.rs.QueryParam;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +33,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.md.apache.commons.io.IOUtils;
 
 import com.cube.examples.dao.OrdersDAO;
 import com.cube.examples.model.Order;
@@ -49,8 +57,8 @@ public class OrderController {
 	@Autowired
 	private ObjectMapper jacksonObjectMapper;
 
-	@Value("classpath:large_payload.json")
-	Resource resourceFile;
+	@Autowired
+	private ResourceLoader resourceLoader;
 
 	private static final Logger LOGGER = LogManager.getLogger(OrderController.class);
 
@@ -76,6 +84,11 @@ public class OrderController {
 	public Order getOrderByIndexPV(Principal principal, @PathVariable("index") String index) {
 		LOGGER.info("getOrderByIndexPV call Received from "+ principal.getName());
 		return ordersDao.getOrderByIndex(Integer.parseInt(index));
+	}
+
+	@PostMapping(path = "/postFormParams", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+	public ResponseEntity<Object> postFormParams(@RequestParam MultiValueMap<String,String> paramMap ) {
+		return ResponseEntity.ok(paramMap);
 	}
 
 	@PostMapping(path = "/postOrder", consumes = "application/json", produces = "application/json")
@@ -112,11 +125,32 @@ public class OrderController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		String largePayloadURL = URL.concat("/largePayload");
-		ResponseEntity<String> responseEntity = restTemplate.postForEntity(largePayloadURL, resourceFile, String.class);
+
+		Resource resource= resourceLoader.getResource("classpath:/large_payload.json");
+
+		InputStream inputStream= resource.getInputStream();
+
+		Assert.notNull(inputStream,"Could not load template resource!");
+
+		String fileData = null;
+
+		try {
+			byte[] bdata = FileCopyUtils.copyToByteArray(inputStream);
+			fileData = new String(bdata, StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			LOGGER.warn("IOException", e);
+		}finally {
+			if ( inputStream != null) {
+				IOUtils.closeQuietly(inputStream);
+			}
+		}
+
+		HttpEntity<String> entity = new HttpEntity<String>(fileData, headers);
+		ResponseEntity<String> responseEntity = restTemplate.postForEntity(largePayloadURL, entity, String.class);
 
 		if (responseEntity.getStatusCode().is2xxSuccessful()) {
 			LOGGER.info("Response code Received :" + responseEntity.getStatusCode());
-			return ResponseEntity.ok(resourceFile);
+			return ResponseEntity.ok(responseEntity.getBody());
 		} else {
 			LOGGER.info("Response Received :" + responseEntity.toString());
 			throw new IllegalArgumentException(
