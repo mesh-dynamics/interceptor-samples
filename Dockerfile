@@ -13,7 +13,6 @@ RUN mvn package -DskipTests
 FROM openjdk:11.0-jre AS PROD
 
 COPY --from=build /target/OrderReceiver-0.0.1-SNAPSHOT.jar /root.jar
-COPY --from=build /samplerconfig.json /tmp/samplerconfig.json
 
 CMD ["java", "-jar", "/root.jar"]
 EXPOSE 8080

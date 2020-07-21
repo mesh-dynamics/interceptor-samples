@@ -1,5 +1,7 @@
 package com.cube.examples.dao;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
@@ -32,5 +34,9 @@ public class OrdersDAO
 
     public Order getOrderByIndex(int index) {
         return list.getOrderList().get(index);
+    }
+
+    public Optional<Order> getOrderById(int id) {
+        return list.getOrderList().stream().filter(value -> value.getId() == id).findFirst();
     }
 }

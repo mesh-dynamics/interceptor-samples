@@ -17,6 +17,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -94,6 +95,11 @@ public class OrderController {
 	@PostMapping(path = "/postOrder", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> placeOrders(@RequestBody Order order,  HttpServletRequest request )
 		throws Exception {
+
+		if (order != null && ordersDao.getOrderById(order.getId()).isPresent()) {
+			LOGGER.info("Order with order id already present :");
+			return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+		}
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
