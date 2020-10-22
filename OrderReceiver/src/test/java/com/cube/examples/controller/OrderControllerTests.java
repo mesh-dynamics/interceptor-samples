@@ -54,8 +54,9 @@ public class OrderControllerTests extends AbstractTest {
 
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
+    //The token used here is a short lived. It has be updated with appropriate token to make this work
     headers.set("Authorization",
-        "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkZW1vQGN1YmVjb3JwLmlvIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTYwMzI1MzczNywiZXhwIjoxNjAzMzQwMTM3fQ.4U0AZyZhpEEy6CyNILDRiBSBY3Wyt0N3WXe78fDd_6Q");
+        "Bearer eyJhbGciOjJIUzI1NiJ9.eyJzdWIiOiJkZW1vQGN1YmVjb3JwLmlvIiwicm9sZXMiOlsiUk9MRV9VU0VSIl0sImlhdCI6MTYwMzI1MzczNywiZXhwIjoxNjAzMzQwMTM3fQ.4U0AZyZhpEEy6CyNILDRiBSBY3Wyt0N3WXe78fDd_6Q");
     headers.set("content-type","application/json");
 
     HttpEntity entity = new HttpEntity(requestBody, headers);
