@@ -6,15 +6,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.autoconfigure.properties.PropertyMapping;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.common.util.JacksonJsonParser;
 import org.springframework.test.context.TestExecutionListeners;
@@ -47,8 +44,9 @@ import com.cube.examples.AbstractTest;
 @AutoConfigureMeshDContext(
     meshDHost = "demo.dev.cubecorp.io",
     authToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJNZXNoREFnZW50VXNlckBjdWJlY29ycC5pbyIsInJvbGVzIjpbIlJPTEVfVVNFUiJdLCJ0eXBlIjoicGF0IiwiY3VzdG9tZXJfaWQiOjMsImlhdCI6MTU4OTgyODI4NiwiZXhwIjoxOTA1MTg4Mjg2fQ.Xn6JTEIAi58it6iOSZ0G7u2waK6a_c-Elpk_cpWsK9s",
-    goldenNames = {"cicd-2715", "negatvie_collection"},
-    app = "springboot_demo"
+    goldenNames = {"GL_orderapp"},
+    app = "springboot_demo",
+    instance = "dev"
     )
 class MeshOrderControllerTests extends AbstractTest {
   private final ObjectMapper objectMapper = new ObjectMapper();
@@ -80,14 +78,14 @@ class MeshOrderControllerTests extends AbstractTest {
 
 
   @Test
-  @MeshTestCaseId(traceIds = {"2b02275d96575", "495409f565cf4c10"}, path = "orders/getOrders/")
+  @MeshTestCaseId(traceIds = {"43efe89ca231e966"}, path = "orders/getOrders")
   public void testGetOrders(MeshDRequest[] requests, MeshDResponse[] responses) throws Exception {
     String accessToken = obtainAccessToken("admin@admin.com", "pwd");
 
     //construct the request to the controller using the data fetch from the MeshD stored captured request
-    String body = requests[0].getBody().toString();;
+    //String body = requests[0].getBody().toString();;
     MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
-        .get(requests[0].getPath())
+        .get("/" + requests[0].getPath())
         .header("Authorization", "Bearer " + accessToken))
         .andReturn();
     int status = mvcResult.getResponse().getStatus();
@@ -97,23 +95,44 @@ class MeshOrderControllerTests extends AbstractTest {
     //assertEquals(responses[0].getBody(), mvcResult.getResponse().getContentAsString());
   }
 
+
   @Test
-  @MeshTestCaseId(traceIds = {"65db02772e5ecad9", "474aac87a50101f2"}, path = "orders/postOrder/")
+  @MeshTestCaseId(traceIds = {"7302758ebf028fd0"}, path = "orders/postOrder")
   public void testPlaceOrders(MeshDRequest[] requests, MeshDResponse[] responses) throws Exception {
 
     String accessToken = obtainAccessToken("admin@admin.com", "pwd");
 
     //construct the request to the controller using the data fetch from the MeshD stored captured request
     String body = requests[0].getBody().toString();
-    MvcResult mvcResult = mvc.perform(post(requests[0].getPath())
+    MvcResult mvcResult = mvc.perform(post("/" + requests[0].getPath())
         .contentType(MediaType.APPLICATION_JSON_VALUE)
         .content(body)
         .header("Authorization", "Bearer " + accessToken)
-        .header("md-trace-id", "474aac87a50101f2:474aac87a50101f2:0:1"))
+        //This trace header setting can also be abstracted to avoid setting it by developer
+        .header("md-trace-id", "7302758ebf028fd0:7302758ebf028fd0:0:1"))
         .andReturn();
     int status = mvcResult.getResponse().getStatus();
 
     //Write your own assertion rules
     assertEquals(201, status);
+  }
+
+  @Test
+  @MeshTestCaseId(traceIds = {"762787e9b0dbbab3"}, path = "orders/getProducts")
+  public void testgetProducts(MeshDRequest[] requests, MeshDResponse[] responses) throws Exception {
+
+    String accessToken = obtainAccessToken("admin@admin.com", "pwd");
+
+    //construct the request to the controller using the data fetch from the MeshD stored captured request
+    //String body = requests[0].getBody().toString();
+    MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders
+        .get("/" + requests[0].getPath())
+        .header("Authorization", "Bearer " + accessToken)
+        .header("md-trace-id", "762787e9b0dbbab3:762787e9b0dbbab3:0:1"))
+        .andReturn();
+    int status = mvcResult.getResponse().getStatus();
+
+    //Write your own assertion rules
+    assertEquals(200, status);
   }
 }

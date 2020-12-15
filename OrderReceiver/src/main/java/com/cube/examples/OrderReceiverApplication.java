@@ -13,18 +13,15 @@ import io.cube.spring.egress.RestTemplateDataInterceptor;
 import io.cube.spring.egress.RestTemplateMockInterceptor;
 import io.cube.spring.egress.RestTemplateTracingInterceptor;
 
-@SpringBootApplication(scanBasePackages = {"com.cube.examples", "io.cube"})
+//@SpringBootApplication(scanBasePackages = {"com.cube.examples", "io.cube"})
+@SpringBootApplication
 public class OrderReceiverApplication {
     @Bean
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        ArrayList<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
-        interceptors.add(new RestTemplateMockInterceptor());
-        interceptors.add(new RestTemplateTracingInterceptor());
-        interceptors.add(new RestTemplateDataInterceptor());
-        restTemplate.setInterceptors(interceptors);
         return restTemplate;
     }
+
     public static void main(String[] args) {
         SpringApplication.run(OrderReceiverApplication.class, args);
     }

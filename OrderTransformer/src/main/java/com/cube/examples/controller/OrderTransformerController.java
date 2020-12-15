@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,6 +31,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.cube.examples.dao.OrdersDAO;
 import com.cube.examples.model.EnhancedOrder;
 import com.cube.examples.model.Order;
+import com.cube.examples.model.Product;
+import com.cube.examples.model.Products;
 
 @RestController
 @RequestMapping(path = "/enhanceAndSendForProcessing")
@@ -43,43 +46,13 @@ public class OrderTransformerController {
 //	@Autowired
 //	private WebClient webClient;
 
-	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<String> enhanceAndProcessOrder(@RequestBody Order order, HttpServletRequest request)
+	@PostMapping(consumes = "application/json", produces = "application/json")
+	public EnhancedOrder enhanceAndProcessOrder(@RequestBody Order order, HttpServletRequest request)
 		throws Exception {
+		LOGGER.info("Call Received :" + order.toString());
 		//add resource
 		EnhancedOrder enhancedOrder = ordersDao.enhanceOrder(order);
-
-//		//send for processing
-//		Mono<ResponseEntity<String>> result = webClient.post()
-//			.uri("/processEnhancedOrders/")
-//			.contentType(org.springframework.http.MediaType.APPLICATION_JSON)
-//			.accept(org.springframework.http.MediaType.APPLICATION_JSON)
-//			.headers(httpHeaders -> httpHeaders.addAll(serverHttpRequest.getHeaders()))
-//			.body(Mono.just(enhancedOrder), EnhancedOrder.class)
-//			.exchange()
-//			.flatMap(response -> response.toEntity(String.class))
-//			.flatMap(entity -> {
-//				int code = entity.getStatusCodeValue();
-//				if (code >= 200 && code <= 299) {
-//					LOGGER.info("Response code Received :" + code);
-//					//Create resource location
-//					URI location = UriComponentsBuilder.fromHttpRequest(serverHttpRequest)
-//						.path("/{id}")
-//						.buildAndExpand(order.getId())
-//						.toUri();
-//					//Send location in response
-//					return Mono.just(ResponseEntity.created(location).build());
-//				} else {
-//					LOGGER.info("Response Received :" + entity.toString());
-//					throw new IllegalArgumentException(
-//						"HTTP error response returned by Processor service " + code);
-//				}
-//			});
-		URI location = UriComponentsBuilder.fromPath(request.getServletPath())
-						.path("/{id}")
-						.buildAndExpand(order.getId())
-						.toUri();
-		return ResponseEntity.created(location).build();
+		return enhancedOrder;
 	}
 
 	@PostMapping(path = "/largePayload", consumes = "application/json", produces = "application/json")
@@ -87,5 +60,9 @@ public class OrderTransformerController {
 		return ResponseEntity.ok(payload);
 	}
 
-
+	@GetMapping(path = "/getProducts", produces = "application/json")
+	public Product[] getProducts() {
+		LOGGER.info("getProducts call Received ");
+		return Products.getProducts();
+	}
 }

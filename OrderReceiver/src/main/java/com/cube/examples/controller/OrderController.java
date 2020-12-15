@@ -17,7 +17,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -38,16 +37,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.md.apache.commons.io.IOUtils;
 
 import com.cube.examples.dao.OrdersDAO;
+import com.cube.examples.model.EnhancedOrder;
 import com.cube.examples.model.Order;
 import com.cube.examples.model.Orders;
+import com.cube.examples.model.Product;
 
 @RestController
-@RequestMapping(path = "/orders")
+@RequestMapping(path = "/api")
 public class OrderController {
 
 	//public static final String URL = "http://order-transformer:9080/enhanceAndSendForProcessing/";
 	//public static final String URL = "http://localhost:8082/enhanceAndSendForProcessing/";
-	public static final String URL = "http://transformer:8081/enhanceAndSendForProcessing/";
+	//public static final String URL = "http://localhost:9000/transformer:8081/transformorder";
+	public static final String URL = "http://transformer:8081/enhanceAndSendForProcessing";
+	//public static final String URL = "http://transformer/enhanceAndSendForProcessing/";
 
 	@Autowired
 	private OrdersDAO ordersDao;
@@ -67,6 +70,18 @@ public class OrderController {
 	public Orders getOrders(Principal principal) {
 		LOGGER.info("getOrders call Received from "+ principal.getName());
 		return ordersDao.getAllOrders();
+	}
+
+	@GetMapping(path = "/getProducts", produces = "application/json")
+	public Product[] getProducts() {
+		LOGGER.info("getProducts call Received ");
+		String getProductsUrl = URL.concat("/getProducts");
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("User-Agent", "Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion");
+		headers.add("Accept", "application/json");
+		HttpEntity entity = new HttpEntity(headers);
+		ResponseEntity<Product[]> responseEntity = restTemplate.exchange(getProductsUrl, HttpMethod.GET, entity, Product[].class);
+		return responseEntity.getBody();
 	}
 
 	@GetMapping(path = "/getOrderByIndex", produces = "application/json")
@@ -92,18 +107,13 @@ public class OrderController {
 		return ResponseEntity.ok(paramMap);
 	}
 
-	@PostMapping(path = "/postOrder", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Object> placeOrders(@RequestBody Order order,  HttpServletRequest request )
+	@PostMapping(path = "/orders", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<EnhancedOrder> placeOrders(@RequestBody Order order,  HttpServletRequest request )
 		throws Exception {
-
-		if (order != null && ordersDao.getOrderById(order.getId()).isPresent()) {
-			LOGGER.info("Order with order id already present :");
-			return new ResponseEntity<>(null, HttpStatus.CONFLICT);
-		}
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		ResponseEntity<String> responseEntity = restTemplate.postForEntity( URL, order, String.class);
+		ResponseEntity<EnhancedOrder> responseEntity = restTemplate.postForEntity( "https://transformer:8081/transformorder", order, EnhancedOrder.class);
 
 		if (responseEntity.getStatusCode().is2xxSuccessful()) {
 			//Generate resource id
@@ -113,16 +123,19 @@ public class OrderController {
 			//add resource
 			ordersDao.placeOrder(order);
 
+			//responseEntity.getBody().setId(id);
+
 			LOGGER.info("Response code Received :" + responseEntity.getStatusCode());
 			URI location = UriComponentsBuilder.fromPath(request.getServletPath())
 					.path("/{id}")
 					.buildAndExpand(order.getId())
 					.toUri();
-				return ResponseEntity.created(location).build();
+				return ResponseEntity.created(location).header("content-type", "application/json").build();
+			//return  ResponseEntity.of(Optional.of(responseEntity.getBody()));
 			} else {
 				LOGGER.info("Response Received :" + responseEntity.toString());
 				throw new IllegalArgumentException(
-					"HTTP error response returned by Transformer service " + responseEntity.getStatusCode());
+					"HTTP error response returned by Transformer service " + responseEntity.toString());
 			}
 		}
 
