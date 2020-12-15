@@ -35,7 +35,7 @@ import com.cube.examples.model.Product;
 import com.cube.examples.model.Products;
 
 @RestController
-@RequestMapping(path = "/enhanceAndSendForProcessing")
+@RequestMapping(path = "/")
 public class OrderTransformerController {
 
 	private static final Logger LOGGER = LogManager.getLogger(OrderTransformerController.class);
@@ -46,7 +46,7 @@ public class OrderTransformerController {
 //	@Autowired
 //	private WebClient webClient;
 
-	@PostMapping(consumes = "application/json", produces = "application/json")
+	@PostMapping(path = "/transformorder", consumes = "application/json", produces = "application/json")
 	public EnhancedOrder enhanceAndProcessOrder(@RequestBody Order order, HttpServletRequest request)
 		throws Exception {
 		LOGGER.info("Call Received :" + order.toString());
@@ -55,12 +55,7 @@ public class OrderTransformerController {
 		return enhancedOrder;
 	}
 
-	@PostMapping(path = "/largePayload", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<Object> largePayload(@RequestBody String payload) {
-		return ResponseEntity.ok(payload);
-	}
-
-	@GetMapping(path = "/getProducts", produces = "application/json")
+	@GetMapping(path = "/products", produces = "application/json")
 	public Product[] getProducts() {
 		LOGGER.info("getProducts call Received ");
 		return Products.getProducts();

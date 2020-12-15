@@ -78,7 +78,7 @@ class MeshOrderControllerTests extends AbstractTest {
 
 
   @Test
-  @MeshTestCaseId(traceIds = {"43efe89ca231e966"}, path = "orders/getOrders")
+  @MeshTestCaseId(traceIds = {"43efe89ca231e966"}, path = "orders")
   public void testGetOrders(MeshDRequest[] requests, MeshDResponse[] responses) throws Exception {
     String accessToken = obtainAccessToken("admin@admin.com", "pwd");
 
@@ -97,7 +97,7 @@ class MeshOrderControllerTests extends AbstractTest {
 
 
   @Test
-  @MeshTestCaseId(traceIds = {"7302758ebf028fd0"}, path = "orders/postOrder")
+  @MeshTestCaseId(traceIds = {"7302758ebf028fd0"}, path = "orders")
   public void testPlaceOrders(MeshDRequest[] requests, MeshDResponse[] responses) throws Exception {
 
     String accessToken = obtainAccessToken("admin@admin.com", "pwd");
@@ -118,7 +118,7 @@ class MeshOrderControllerTests extends AbstractTest {
   }
 
   @Test
-  @MeshTestCaseId(traceIds = {"762787e9b0dbbab3"}, path = "orders/getProducts")
+  @MeshTestCaseId(traceIds = {"762787e9b0dbbab3"}, path = "products")
   public void testgetProducts(MeshDRequest[] requests, MeshDResponse[] responses) throws Exception {
 
     String accessToken = obtainAccessToken("admin@admin.com", "pwd");
