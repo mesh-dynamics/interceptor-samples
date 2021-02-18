@@ -186,7 +186,7 @@ public class OrderController {
 
 	}
 
-	@PostMapping(path = "/flushAll", produces = "application/json")
+	@PostMapping(path = "/flushAll")
 	public ResponseEntity<String> flushOrders(Principal principal) {
 		ordersDao.flushOrders();
 		return ResponseEntity.ok("Cleared");
