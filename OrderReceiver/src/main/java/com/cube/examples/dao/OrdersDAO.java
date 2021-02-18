@@ -1,5 +1,7 @@
 package com.cube.examples.dao;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,9 +19,7 @@ public class OrdersDAO
     private static final Logger LOGGER = LogManager.getLogger(OrdersDAO.class);
     static 
     {
-        list.getOrderList().add(new Order(1, 1, new Order.Customer("Lokesh", "Gupta", "xyz@gmail.com")));
-        list.getOrderList().add(new Order(2, 2, new Order.Customer("Alex", "Kolenchiskey", "abc@gmail.com")));
-        list.getOrderList().add(new Order(3, 3, new Order.Customer("David", "Kameron", "test@gmail.com")));
+        init();
     }
     
     public Orders getAllOrders()
@@ -38,5 +38,16 @@ public class OrdersDAO
 
     public Optional<Order> getOrderById(int id) {
         return list.getOrderList().stream().filter(value -> value.getId() == id).findFirst();
+    }
+
+    public void flushOrders() {
+        init();
+    }
+
+    private static void init() {
+        list = new Orders();
+        list.getOrderList().add(new Order(1, 1, new Order.Customer("Lokesh", "Gupta", "xyz@gmail.com")));
+        list.getOrderList().add(new Order(2, 2, new Order.Customer("Alex", "Kolenchiskey", "abc@gmail.com")));
+        list.getOrderList().add(new Order(3, 3, new Order.Customer("David", "Kameron", "test@gmail.com")));
     }
 }
